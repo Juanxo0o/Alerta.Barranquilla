@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoreo Eléctrico - Barranquilla</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="login-container">
+        <div class="login-box">
+            <h1>Iniciar Sesión</h1>
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="username">Usuario:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="button" onclick="login()">Ingresar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="app-container" style="display: none;">
+        <header>
+            <h1>Alerta Eléctrica - Barranquilla</h1>
+            <p>Prevención de riesgos por lluvias y vientos fuertes</p>
+            <button id="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </header>
+        <main>
+            <section id="user-section">
+                <h2>Selecciona tu barrio</h2>
+                <select id="barrios">
+                    <option value="default">-- Elige tu barrio --</option>
+                    <option>El Prado</option>
+                    <option>Alameda del Río</option>
+                    <option>La Victoria</option>
+                    <option>Los Andes</option>
+                    <option>San José</option>
+                    <option>Rebolo</option>
+                    <option>Me Quejo</option>
+                    <option>Ciudadela 20 de Julio</option>
+                    <option>Villa Carolina</option>
+                    <option>Boston</option>
+                    <option>Montecristo</option>
+                    <option>Riomar</option>
+                    <option>Altos del Limón</option>
+                    <option>Los Nogales</option>
+                    <option>Las Nieves</option>
+                    <option>Bella Arena</option>
+                </select>
+                <button onclick="verificarFluido()">Verificar Fluido Eléctrico</button>
+                <p id="estadoFluido"></p>
+            </section>
+            <section id="alertas">
+                <h2>Alertas en tu zona</h2>
+                <input type="text" id="nuevaAlerta" placeholder="Escribe una alerta">
+                <button onclick="agregarAlerta()">Agregar</button>
+                <ul id="listaAlertas"></ul>
+            </section>
+        </main>
+        <footer>
+            <p>© 2025 Sistema de Monitoreo Eléctrico - Barranquilla</p>
+        </footer>
+    </div>
+
+    <div id="admin-container" style="display: none;">
+        <header>
+            <h1>Panel de Administración</h1>
+            <p>Monitoreo eléctrico - Barranquilla</p>
+            <button id="admin-logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </header>
+        <main>
+            <section id="monitoreo-tiempo-real">
+                <h2>Monitoreo en Tiempo Real</h2>
+                <div class="grafico-container">
+                    <canvas id="grafico-tension" width="800" height="300"></canvas>
+                </div>
+                <div class="indicadores-tiempo-real">
+                    <div class="indicador">
+                        <h3>Voltaje Actual</h3>
+                        <p id="voltaje-actual">0 V</p>
+                    </div>
+                    <div class="indicador">
+                        <h3>Estado Red</h3>
+                        <p id="estado-red">---</p>
+                    </div>
+                    <div class="indicador">
+                        <h3>Tensión Cables</h3>
+                        <p id="tension-cables">---</p>
+                    </div>
+                </div>
+                <div class="controles">
+                    <button onclick="iniciarMonitoreo()">Iniciar Monitoreo</button>
+                    <button onclick="detenerMonitoreo()">Detener Monitoreo</button>
+                    <button onclick="simularFalla()">Simular Falla</button>
+                </div>
+            </section>
+            
+            <section id="admin-alertas">
+                <h2>Alertas Reportadas</h2>
+                <div class="filtros">
+                    <select id="filtro-barrio">
+                        <option value="todos">Todos los barrios</option>
+                        <option>El Prado</option>
+                        <option>Alameda del Río</option>
+                        <option>La Victoria</option>
+                        <option>Los Andes</option>
+                        <option>San José</option>
+                        <option>Rebolo</option>
+                        <option>Me Quejo</option>
+                        <option>Ciudadela 20 de Julio</option>
+                        <option>Villa Carolina</option>
+                        <option>Boston</option>
+                        <option>Montecristo</option>
+                        <option>Riomar</option>
+                        <option>Altos del Limón</option>
+                        <option>Los Nogales</option>
+                        <option>Las Nieves</option>
+                        <option>Bella Arena</option>
+                    </select>
+                    <button onclick="filtrarAlertas()">Filtrar</button>
+                </div>
+                <ul id="lista-alertas-admin"></ul>
+            </section>
+            
+            <section id="estado-electrico">
+                <h2>Estado Eléctrico por Zona</h2>
+                <div class="zona-info">
+                    <div class="mapa-container">
+                        <h3>Mapa de Postes</h3>
+                        <div id="mapa-postes">
+                            <!-- Mapa simulado -->
+                            <div class="poste" style="top: 20%; left: 15%;" data-estado="bueno"></div>
+                            <div class="poste" style="top: 30%; left: 25%;" data-estado="bueno"></div>
+                            <div class="poste" style="top: 40%; left: 35%;" data-estado="danado"></div>
+                            <div class="poste" style="top: 25%; left: 45%;" data-estado="bueno"></div>
+                            <div class="poste" style="top: 35%; left: 55%;" data-estado="critico"></div>
+                            <div class="poste" style="top: 45%; left: 65%;" data-estado="bueno"></div>
+                            <div class="poste" style="top: 30%; left: 75%;" data-estado="bueno"></div>
+                        </div>
+                    </div>
+                    <div class="estado-general">
+                        <h4>Estado General</h4>
+                        <p id="voltaje-promedio">Voltaje promedio: <span>220V</span></p>
+                        <p id="postes-danados">Postes dañados: <span>2/150</span></p>
+                        <p id="fluido-general">Fluido eléctrico: <span class="estado-bueno">Funcionando</span></p>
+                        <div class="leyenda">
+                            <h4>Leyenda:</h4>
+                            <p><span class="estado-bueno">●</span> Buen estado</p>
+                            <p><span class="estado-inestable">●</span> Inestable</p>
+                            <p><span class="estado-critico">●</span> Crítico</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="configuracion">
+                <h2>Configuración del Sistema</h2>
+                <button onclick="actualizarEstados()">Actualizar Estados Automáticos</button>
+                <button onclick="generarReporte()">Generar Reporte Diario</button>
+            </section>
+        </main>
+        <footer>
+            <p>© 2025 Panel de Administración - Monitoreo Eléctrico</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
